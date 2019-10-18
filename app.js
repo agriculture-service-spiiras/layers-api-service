@@ -7,12 +7,6 @@ var indexRouter = require("./routes/index");
 
 var app = express();
 
-var store = require("./store")();
-app.use(function(req, res, next) {
-  req.store = store;
-  next();
-});
-
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
