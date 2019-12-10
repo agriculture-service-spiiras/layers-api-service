@@ -1,13 +1,15 @@
 var express = require("express");
+var request = require("request");
+
 var router = express.Router();
 
-var store = require("./store")();
+var store = require("../store")();
 
 // Get layers list
-router.get("/", function(req, res, next) {
-  const resultOperation = store.getLayers();
-  if (resultOperation) {
-    res.json(resultOperation);
+router.get("/", async function(req, res, next) {
+  const layers = await req.wfs.getLayersList();
+  if (layers) {
+    res.send({ layers });
   } else {
     res.sendStatus(404);
   }
@@ -15,9 +17,10 @@ router.get("/", function(req, res, next) {
 
 // Get any layer by id
 router.get("/:id", function(req, res, next) {
-  const resultOperation = store.getLayer(req.params.id);
+  const { id } = req.params;
+  const resultOperation = store.getLayer(id);
   if (resultOperation) {
-    res.json(resultOperation);
+    res.send(resultOperation);
   } else {
     res.sendStatus(404);
   }
