@@ -6,6 +6,9 @@ var cors = require("cors");
 var wfs = require("./wfs");
 
 var indexRouter = require("./routes/index");
+var geodataRouter = require("./routes/geodata");
+
+var config = require("./config.js");
 
 var app = express();
 
@@ -15,8 +18,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(wfs("http://192.168.0.130:14002/geoserver/real_data/ows?"));
+app.use(wfs(config.dataEndpoint));
 
 app.use("/", indexRouter);
+app.use("/geodata", geodataRouter);
 
 module.exports = app;

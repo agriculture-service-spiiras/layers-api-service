@@ -7,10 +7,14 @@ module.exports = function(endpoint) {
   return function(req, res, next) {
     req.wfs = {
       getLayersList: async function() {
-        const capabilities = await client.capabilities();
-        return capabilities.featureTypes.map(function(layer) {
-          return layer.name;
-        });
+        try {
+          const capabilities = await client.capabilities();
+          return capabilities.featureTypes.map(function(layer) {
+            return layer.name;
+          });
+        } catch (error) {
+          return null;
+        }
       }
     };
     next();
