@@ -1,18 +1,34 @@
+const WfsClient = require('wfs-client');
+const axios = require('axios');
+
 /* eslint-disable no-unused-vars */
 exports.ObjectsGeodata = class ObjectsGeodata {
   constructor(options) {
     this.options = options || {};
+
+    const { apiURL } = this.options;
+    this.wfsClient = new WfsClient(apiURL);
   }
 
   async find(params) {
-    return [];
+    const capabilities = await this.wfsClient.capabilities();
+    return Promise.all(capabilities.featureTypes.map(({ name: layerId }) => this.get(layerId)));
   }
 
   async get(id, params) {
-    return {
-      id,
-      text: `A new message with ID: ${id}!`,
-    };
+    const { apiURL, paginate } = this.options;
+    const { data: layerData } = await axios.get(
+      `${apiURL}?service=WFS&version=1.0.0&request=GetFeature&typeName=${id}&maxFeatures=${paginate.max}&outputFormat=application/json`,
+    );
+    const objects = layerData.features || null;
+    if (objects) {
+      return {
+        layerId: id,
+        objects,
+      };
+    } else {
+      return null;
+    }
   }
 
   async create(data, params) {

@@ -4,6 +4,7 @@ const hooks = require('./objects-geodata.hooks');
 
 module.exports = function(app) {
   const options = {
+    apiURL: app.get('geoserver'),
     paginate: app.get('paginate'),
   };
 
